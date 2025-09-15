@@ -614,7 +614,7 @@ sources:
   repo: https://github.com/truenas/binaries
   branch: master
 - name: truenas_webui
-  repo: https://github.com/truenas/webui
+  repo: https://github.com/HarborNAS/webui
   env:
     COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
   predepscmd:
