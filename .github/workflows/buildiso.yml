@@ -1,0 +1,34 @@
+name: build iso
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "version number"
+        required: true
+        type: string
+
+jobs:
+  build-iso:
+    runs-on: [self-hosted]
+    timeout-minutes: 240
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          clean: false
+      - name: install packages
+        run: |
+          sudo apt install -y build-essential debootstrap git python3-pip python3-venv squashfs-tools unzip libjson-perl rsync libarchive-tools
+      - name: update to latest sources
+        run: |
+          sudo make checkout
+      - name: Builds all the *.deb packages
+        run: |
+          sudo make packages
+      - name: Builds the stand-alone update file
+        run: |
+          sudo make update
+      - name: Builds the ISO image
+        run: |
+          sudo TRUENAS_VENDOR=HarborNAS make iso

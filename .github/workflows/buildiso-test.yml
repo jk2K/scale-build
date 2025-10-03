@@ -1,0 +1,51 @@
+name: build test iso
+
+on:
+  workflow_dispatch:
+    inputs:
+      webui:
+        description: "webui branch"
+        required: true
+        default: "master"
+        type: string
+
+jobs:
+  build-iso:
+    runs-on: [self-hosted]
+    timeout-minutes: 240
+    steps:
+      - name: set version
+        id: set-version
+        run: |
+          _VERS="26.04.0-MASTER"
+          VERSION="${_VERS}-$(date +%Y%m%d-%H%M%S)"
+          # example, 26.04.0-MASTER-20251003-213627
+          echo "HarborNAS_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          clean: false
+      - name: install packages
+        run: |
+          sudo apt install -y build-essential debootstrap git python3-pip python3-venv squashfs-tools unzip libjson-perl rsync libarchive-tools
+      - name: update to latest sources
+        run: |
+          sudo truenas_webui_OVERRIDE=${{ inputs.webui }} make checkout
+      - name: Builds all the *.deb packages
+        run: |
+          sudo TRUENAS_VERSION=${{steps.set-version.outputs.HarborNAS_VERSION}} make packages
+      - name: Builds the stand-alone update file
+        run: |
+          sudo make update
+      - name: Builds the ISO image
+        run: |
+          sudo TRUENAS_VENDOR=HarborNAS make iso
+      - name: upload iso
+        env:
+          QCLOUD_ACCESS_KEY_ID: ${{ secrets.QCLOUD_SECRETID }}
+          QCLOUD_SECRET_ACCESS_KEY: ${{ secrets.QCLOUD_SECRETKEY }}
+          TRUENAS_VERSION: ${{steps.set-version.outputs.HarborNAS_VERSION}}
+        run: |
+          coscli config add -b willow-1256175635 -r ap-guangzhou -a willow --init-skip || true
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/TrueNAS-SCALE-${TRUENAS_VERSION}-HarborNAS.iso" "cos://willow/test/${TRUENAS_VERSION}-HarborNAS.iso"
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/TrueNAS-SCALE-${TRUENAS_VERSION}-HarborNAS.iso.sha256" "cos://willow/test/${TRUENAS_VERSION}-HarborNAS.iso.sha256"
