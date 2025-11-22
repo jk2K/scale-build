@@ -39,7 +39,7 @@ jobs:
           sudo make update
       - name: Builds the ISO image
         run: |
-          sudo TRUENAS_VENDOR=HarborNAS make iso
+          sudo TRUENAS_VENDOR=HarborOS make iso
       - name: upload iso
         env:
           QCLOUD_ACCESS_KEY_ID: ${{ secrets.QCLOUD_SECRETID }}
