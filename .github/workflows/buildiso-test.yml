@@ -8,6 +8,11 @@ on:
         required: true
         default: "master"
         type: string
+      uploadIso:
+        description: "upload iso to cos"
+        required: true
+        default: "true"
+        type: string
 
 jobs:
   build-iso:
@@ -41,6 +46,7 @@ jobs:
         run: |
           sudo TRUENAS_VENDOR=HarborOS make iso
       - name: upload iso
+        if: ${{ inputs.uploadIso == 'true' }}
         env:
           QCLOUD_ACCESS_KEY_ID: ${{ secrets.QCLOUD_SECRETID }}
           QCLOUD_SECRET_ACCESS_KEY: ${{ secrets.QCLOUD_SECRETKEY }}
