@@ -571,7 +571,7 @@ sources:
   repo: https://github.com/truenas/truenas_connect_utils
   branch: master
 - name: truenas_installer
-  repo: https://github.com/truenas/truenas-installer
+  repo: https://github.com/HarborNAS/truenas-installer
   branch: master
 - name: scst
   repo: https://github.com/truenas/scst
