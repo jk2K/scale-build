@@ -766,3 +766,6 @@ external-packages:
     url_template: "https://assets.sys.truenas.net/debian-packages/{package}_{version}_{arch}.deb"
     post_install_commands:
       - ["systemctl", "disable", "rwd"]
+  harboros-subscreen:
+    deb_version: "1.0.0"
+    url_template: "https://github.com/HarborNAS/sub-screen/releases/download/v{version}/harboros-subscreen_{version}_linux_{arch}.deb"
