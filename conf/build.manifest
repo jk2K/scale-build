@@ -675,7 +675,7 @@ sources:
   repo: https://github.com/truenas/py-nvme
   branch: master
 - name: truenas
-  repo: https://github.com/truenas/middleware
+  repo: https://github.com/HarborNAS/middleware
   branch: master
   subdir: debian
   subpackages:
