@@ -53,5 +53,5 @@ jobs:
           TRUENAS_VERSION: ${{steps.set-version.outputs.HarborNAS_VERSION}}
         run: |
           coscli config add -b willow-1256175635 -r ap-guangzhou -a willow --init-skip || true
-          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/TrueNAS-SCALE-${TRUENAS_VERSION}-HarborNAS.iso" "cos://willow/test/${TRUENAS_VERSION}-HarborNAS.iso"
-          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/TrueNAS-SCALE-${TRUENAS_VERSION}-HarborNAS.iso.sha256" "cos://willow/test/${TRUENAS_VERSION}-HarborNAS.iso.sha256"
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/TrueNAS-SCALE-${TRUENAS_VERSION}-HarborOS.iso" "cos://willow/test/${TRUENAS_VERSION}-HarborOS.iso"
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/TrueNAS-SCALE-${TRUENAS_VERSION}-HarborOS.iso.sha256" "cos://willow/test/${TRUENAS_VERSION}-HarborOS.iso.sha256"
