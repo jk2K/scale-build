@@ -1,3 +1,5 @@
+#!/bin/bash
+
 updateFileName="TrueNAS-SCALE-${TRUENAS_VERSION}"
 CODE_NAME=$(yq -r '.code_name' conf/build.manifest)
 R2_ENDPOINT="https://b001991453068c59d8f4aa512bc0b16a.r2.cloudflarestorage.com"
