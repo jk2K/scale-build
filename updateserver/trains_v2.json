@@ -1,0 +1,25 @@
+{
+  "trains": {
+    "TrueNAS-SCALE-GoldEye-Nightlies": {
+      "description": "TrueNAS SCALE GoldEye 25.10 Nightlies [developer only]"
+    },    
+    "TrueNAS-SCALE-Goldeye-BETA": {
+      "description": "TrueNAS SCALE Goldeye 25.10 BETA"
+    },
+    "TrueNAS-SCALE-Goldeye-RC": {
+      "description": "TrueNAS SCALE Goldeye 25.10 RC"
+    },
+    "TrueNAS-SCALE-Goldeye": {
+      "description": "TrueNAS SCALE Goldeye 25.10"
+    },
+    "TrueNAS-SCALE-Halfmoon-Nightlies": {
+      "description": "TrueNAS SCALE Halfmoon 26.04 Nightlies [developer only]"	
+    }  
+},
+  "trains_redirection": {
+    "TrueNAS-SCALE-GoldEye-Nightlies": "TrueNAS-SCALE-GoldEye-Nightlies",
+    "TrueNAS-SCALE-Halfmoon-Nightlies": "TrueNAS-SCALE-Halfmoon-Nightlies",
+    "TrueNAS-SCALE-Goldeye-BETA": "TrueNAS-SCALE-Goldeye",
+    "TrueNAS-SCALE-Goldeye-RC": "TrueNAS-SCALE-Goldeye"
+  }
+}
