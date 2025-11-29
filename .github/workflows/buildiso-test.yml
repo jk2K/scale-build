@@ -70,4 +70,4 @@ jobs:
       - name: update releases.json
         if: ${{ inputs.uploadIso == 'true' }}
         run: |
-          sudo TRUENAS_VERSION=${{steps.set-version.outputs.HarborNAS_VERSION}} ./updateserver/test-release.sh
+          TRUENAS_VERSION=${{steps.set-version.outputs.HarborNAS_VERSION}} ./updateserver/test-release.sh
