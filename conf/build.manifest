@@ -699,7 +699,7 @@ sources:
   repo: https://github.com/truenas/truenas_verify
   branch: master
 - name: midcli
-  repo: https://github.com/HarborOS/midcli
+  repo: https://github.com/HarborNAS/midcli
   branch: master
 - name: grub2
   repo: https://github.com/truenas/grub2
