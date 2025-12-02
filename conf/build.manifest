@@ -343,6 +343,9 @@ additional-packages:
 - name: libhidapi-hidraw0
   comment: requested by harboros subscreen
   install_recommends: false
+- name: ntfs-3g
+  comment: requested by harboros, support NTFS
+  install_recommends: false
 
 #
 # List of additional packages installed into TrueNAS SCALE ISO file
