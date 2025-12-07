@@ -67,8 +67,8 @@ jobs:
           coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${isoFileName}.iso.sha256" "cos://willow/test/${isoFileName}.iso.sha256"
           coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${updateFileName}.update" "cos://willow/test/${updateFileName}.update"
           coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${updateFileName}.update.sha256" "cos://willow/test/${updateFileName}.update.sha256"
-          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/test/${isoFileName}.iso" --body "./tmp/release/${isoFileName}.iso"
-          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/test/${isoFileName}.iso.sha256" --body "./tmp/release/${isoFileName}.iso.sha256"
+          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/TrueNAS-SCALE-${CODE_NAME}-Nightlies/${isoFileName}.iso" --body "./tmp/release/${isoFileName}.iso"
+          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/TrueNAS-SCALE-${CODE_NAME}-Nightlies/${isoFileName}.iso.sha256" --body "./tmp/release/${isoFileName}.iso.sha256"
           /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/TrueNAS-SCALE-${CODE_NAME}-Nightlies/${updateFileName}.update" --body "./tmp/release/${updateFileName}.update"
           /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/TrueNAS-SCALE-${CODE_NAME}-Nightlies/${updateFileName}.update.sha256" --body "./tmp/release/${updateFileName}.update.sha256"
       - name: update releases.json
