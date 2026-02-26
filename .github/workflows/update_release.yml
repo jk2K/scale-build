@@ -1,0 +1,28 @@
+name: update releases.json
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "version number"
+        required: true
+        type: string
+
+jobs:
+  build-iso:
+    runs-on: [self-hosted]
+    timeout-minutes: 240
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          clean: false
+      - name: set version
+        id: set-version
+        run: |
+          CODE_NAME=$(yq -r '.code_name' conf/build.manifest)
+          TRAIN="TrueNAS-SCALE-${CODE_NAME}"
+          echo "TRUENAS_TRAIN=$TRAIN" >> "$GITHUB_OUTPUT"
+      - name: update releases.json
+        run: |
+          TRUENAS_VERSION=${{inputs.version}} TRUENAS_TRAIN=${{steps.set-version.outputs.TRUENAS_TRAIN}} ./updateserver/test-release.sh

@@ -1,10 +1,11 @@
 #!/bin/bash
 
 updateFileName="TrueNAS-SCALE-${TRUENAS_VERSION}"
+train="${TRUENAS_TRAIN}"
 CODE_NAME=$(yq -r '.code_name' conf/build.manifest)
 R2_ENDPOINT="https://b001991453068c59d8f4aa512bc0b16a.r2.cloudflarestorage.com"
 R2_BUCKET="harboros-update"
-RELEASES_KEY="scale/TrueNAS-SCALE-${CODE_NAME}-Nightlies/releases.json"
+RELEASES_KEY="scale/${train}/releases.json"
 
 mkdir -p ./tmp-update-releases
 

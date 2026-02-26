@@ -17,18 +17,48 @@ jobs:
         uses: actions/checkout@v4
         with:
           clean: false
+      - name: set version
+        id: set-version
+        run: |
+          _VERS="26.04.0-MASTER"
+          VERSION="${_VERS}-$(date +%Y%m%d-%H%M%S)"
+          # example, 26.04.0-MASTER-20251003-213627
+          echo "HarborNAS_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+          CODE_NAME=$(yq -r '.code_name' conf/build.manifest)
+          TRAIN="TrueNAS-SCALE-${CODE_NAME}"
+          echo "TRUENAS_TRAIN=$TRAIN" >> "$GITHUB_OUTPUT"
       - name: install packages
         run: |
           sudo apt install -y build-essential debootstrap git python3-pip python3-venv squashfs-tools unzip libjson-perl rsync libarchive-tools
       - name: update to latest sources
         run: |
-          sudo make checkout
+          sudo truenas_webui_OVERRIDE=main truenas_OVERRIDE=main make checkout
       - name: Builds all the *.deb packages
         run: |
-          sudo make packages
+          sudo TRUENAS_VERSION=${{steps.set-version.outputs.HarborNAS_VERSION}} TRUENAS_TRAIN=${{steps.set-version.outputs.TRUENAS_TRAIN}} make packages
       - name: Builds the stand-alone update file
         run: |
           sudo make update
       - name: Builds the ISO image
         run: |
-          sudo TRUENAS_VENDOR=HarborNAS make iso
+          sudo TRUENAS_VENDOR=HarborOS make iso
+      - name: upload iso
+        env:
+          QCLOUD_ACCESS_KEY_ID: ${{ secrets.QCLOUD_SECRETID }}
+          QCLOUD_SECRET_ACCESS_KEY: ${{ secrets.QCLOUD_SECRETKEY }}
+          TRUENAS_VERSION: ${{steps.set-version.outputs.HarborNAS_VERSION}}
+        run: |
+          isoFileName="TrueNAS-SCALE-${TRUENAS_VERSION}-HarborOS"
+          updateFileName="TrueNAS-SCALE-${TRUENAS_VERSION}"
+          R2_ENDPOINT="https://b001991453068c59d8f4aa512bc0b16a.r2.cloudflarestorage.com"
+          R2_BUCKET="harboros-update"
+          coscli config add -b harboros-1317635745 -r ap-guangzhou -a willow --init-skip || true
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${isoFileName}.iso" "cos://willow/test/${isoFileName}.iso"
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${isoFileName}.iso.sha256" "cos://willow/test/${isoFileName}.iso.sha256"
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${updateFileName}.update" "cos://willow/test/${updateFileName}.update"
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${updateFileName}.update.sha256" "cos://willow/test/${updateFileName}.update.sha256"
+          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${{inputs.train}}/${isoFileName}.iso" --body "./tmp/release/${isoFileName}.iso"
+          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${{inputs.train}}/${isoFileName}.iso.sha256" --body "./tmp/release/${isoFileName}.iso.sha256"
+          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${{inputs.train}}/${updateFileName}.update" --body "./tmp/release/${updateFileName}.update"
+          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${{inputs.train}}/${updateFileName}.update.sha256" --body "./tmp/release/${updateFileName}.update.sha256"
