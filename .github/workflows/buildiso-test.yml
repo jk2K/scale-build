@@ -13,11 +13,20 @@ on:
         required: true
         default: "master"
         type: string
-      uploadIso:
-        description: "upload iso to cos"
+      trainSuffix:
+        description: "train suffix"
         required: true
-        default: "true"
-        type: string
+        default: "-Nightlies"
+        type: choice
+        options:
+          - -Nightlies
+          - -RC
+          - -BETA
+      releaseUpdate:
+        description: "after releasing, developers can perform an OTA update"
+        required: true
+        default: true
+        type: boolean
 
 jobs:
   build-iso:
@@ -37,7 +46,7 @@ jobs:
           echo "HarborNAS_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
           CODE_NAME=$(yq -r '.code_name' conf/build.manifest)
-          TRAIN="TrueNAS-SCALE-${CODE_NAME}"
+          TRAIN="TrueNAS-SCALE-${CODE_NAME}${{inputs.trainSuffix}}"
           echo "TRUENAS_TRAIN=$TRAIN" >> "$GITHUB_OUTPUT"
       - name: install packages
         run: |
@@ -55,7 +64,6 @@ jobs:
         run: |
           sudo TRUENAS_VENDOR=HarborOS make iso
       - name: upload iso
-        if: ${{ inputs.uploadIso == 'true' }}
         env:
           QCLOUD_ACCESS_KEY_ID: ${{ secrets.QCLOUD_SECRETID }}
           QCLOUD_SECRET_ACCESS_KEY: ${{ secrets.QCLOUD_SECRETKEY }}
@@ -76,6 +84,6 @@ jobs:
           /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${TRUENAS_TRAIN}/${updateFileName}.update" --body "./tmp/release/${updateFileName}.update"
           /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${TRUENAS_TRAIN}/${updateFileName}.update.sha256" --body "./tmp/release/${updateFileName}.update.sha256"
       - name: update releases.json
-        if: ${{ inputs.uploadIso == 'true' }}
+        if: ${{ inputs.releaseUpdate }}
         run: |
           TRUENAS_VERSION=${{steps.set-version.outputs.HarborNAS_VERSION}} TRUENAS_TRAIN=${{steps.set-version.outputs.TRUENAS_TRAIN}} ./updateserver/test-release.sh

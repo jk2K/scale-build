@@ -1,4 +1,4 @@
-name: update releases.json
+name: Release stable OTA update
 
 on:
   workflow_dispatch:

@@ -21,6 +21,15 @@ FILESIZE=$(stat --format=%s "./tmp/release/${updateFileName}.update")
 echo "Generating current date..."
 CURRENT_DATE=$(date -u +"%Y-%m-%dT%H:%M:%S.%6N")
 
+echo "Determining release profile based on train..."
+if [[ "$train" == *-Nightlies ]]; then
+  PROFILE="DEVELOPER"
+elif [[ "$train" == *-BETA || "$train" == *-RC ]]; then
+  PROFILE="EARLY_ADOPTER"
+else
+  PROFILE="GENERAL"
+fi
+
 echo "Creating new release entry..."
 NEW_ENTRY=$(cat <<EOF
 {
@@ -31,7 +40,7 @@ NEW_ENTRY=$(cat <<EOF
     "changelog": "",
     "checksum": "${CHECKSUM}",
     "filesize": ${FILESIZE},
-    "profile": "DEVELOPER"
+    "profile": "${PROFILE}"
 }
 }
 EOF
