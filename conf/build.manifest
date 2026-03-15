@@ -374,12 +374,12 @@ iso-packages:
 ############################################################################
 sources:
 - name: truenas-openssl-provider-fips
-  repo: https://github.com/truenas/openssl-fips
+  repo: https://github.com/HarborNAS/openssl-fips
   branch: master
   predepscmd:
     - "apt install -y wget xz-utils"
 - name: kernel
-  repo: https://github.com/truenas/linux
+  repo: https://github.com/HarborNAS/linux
   branch: truenas/linux-6.18
   batch_priority: 0
   supports_ccache: true
@@ -425,10 +425,10 @@ sources:
         - "rm -rf .config.old"
         - "make -j$(nproc) bindeb-pkg"
 - name: nfs4xdr_acl_tools
-  repo: https://github.com/truenas/nfs4xdr-acl-tools
+  repo: https://github.com/HarborNAS/nfs4xdr-acl-tools
   branch: master
 - name: openzfs
-  repo: https://github.com/truenas/zfs
+  repo: https://github.com/HarborNAS/zfs
   batch_priority: 0
   branch: truenas/zfs-2.4-release
   env:
@@ -480,55 +480,55 @@ sources:
         - kernel-dbg
       generate_version: false
 - name: truenas_pylibvirt
-  repo: https://github.com/truenas/truenas_pylibvirt
+  repo: https://github.com/HarborNAS/truenas_pylibvirt
   branch: master
 - name: truenas_pynetif
-  repo: https://github.com/truenas/truenas_pynetif
+  repo: https://github.com/HarborNAS/truenas_pynetif
   branch: master
 - name: truenas_pylibzfs
-  repo: https://github.com/truenas/truenas_pylibzfs
+  repo: https://github.com/HarborNAS/truenas_pylibzfs
   branch: master
   explicit_deps:
     - openzfs
 - name: truenas_pykeyring
-  repo: https://github.com/truenas/truenas_pykeyring
+  repo: https://github.com/HarborNAS/truenas_pykeyring
   branch: master
 - name: truenas_pyos
-  repo: https://github.com/truenas/truenas_pyos
+  repo: https://github.com/HarborNAS/truenas_pyos
   branch: master
   predepscmd:
     - "apt install -y linux-truenas-production-libc-dev"
   explicit_deps:
     - kernel
 - name: truenas_pwenc
-  repo: https://github.com/truenas/truenas_pwenc
+  repo: https://github.com/HarborNAS/truenas_pwenc
   branch: master
 - name: truenas_scram
-  repo: https://github.com/truenas/truenas_scram
+  repo: https://github.com/HarborNAS/truenas_scram
   branch: master
 - name: truenas_pypam
-  repo: https://github.com/truenas/truenas_pypam
+  repo: https://github.com/HarborNAS/truenas_pypam
   branch: master
 - name: pam_truenas
-  repo: https://github.com/truenas/pam_truenas
+  repo: https://github.com/HarborNAS/pam_truenas
   explicit_deps:
     - truenas_pwenc
     - truenas_scram
   branch: master
 - name: truenas_samba
-  repo: https://github.com/truenas/samba
+  repo: https://github.com/HarborNAS/samba
   branch: SCALE-v4-23-stable
   generate_version: false
   batch_priority: 0
   explicit_deps:
     - openzfs
 - name: truenas_pyscstadmin
-  repo: https://github.com/truenas/truenas_pyscstadmin
+  repo: https://github.com/HarborNAS/truenas_pyscstadmin
   branch: master
   buildcmd:
     - "dpkg-buildpackage -us -uc -b"
 - name: truenas_sssd
-  repo: https://github.com/truenas/sssd
+  repo: https://github.com/HarborNAS/sssd
   branch: truenas/2.9
   generate_version: false
   predepscmd:
@@ -537,7 +537,7 @@ sources:
     - openzfs
     - truenas_samba
 - name: truenas_ipaclient
-  repo: https://github.com/truenas/freeipa
+  repo: https://github.com/HarborNAS/freeipa
   branch: main
   generate_version: false
   predepscmd:
@@ -548,7 +548,7 @@ sources:
     - truenas_samba
     - truenas_sssd
 - name: truenas_spdk
-  repo: https://github.com/truenas/truenas_spdk
+  repo: https://github.com/HarborNAS/truenas_spdk
   branch: master
   generate_version: false
   env:
@@ -562,28 +562,28 @@ sources:
     - kernel
     - kernel-dbg
 - name: avahi
-  repo: https://github.com/truenas/avahi
+  repo: https://github.com/HarborNAS/avahi
   branch: SCALE-v0.8
   generate_version: false
 - name: py_libzfs
-  repo: https://github.com/truenas/py-libzfs
+  repo: https://github.com/HarborNAS/py-libzfs
   branch: master
   explicit_deps:
     - openzfs
 - name: zettarepl
-  repo: https://github.com/truenas/zettarepl
+  repo: https://github.com/HarborNAS/zettarepl
   branch: master
 - name: truenas_crypto_utils
-  repo: https://github.com/truenas/truenas_crypto_utils
+  repo: https://github.com/HarborNAS/truenas_crypto_utils
   branch: master
 - name: truenas_connect_utils
-  repo: https://github.com/truenas/truenas_connect_utils
+  repo: https://github.com/HarborNAS/truenas_connect_utils
   branch: master
 - name: truenas_installer
   repo: https://github.com/HarborNAS/truenas-installer
   branch: master
 - name: scst
-  repo: https://github.com/truenas/scst
+  repo: https://github.com/HarborNAS/scst
   generate_version: false
   env:
     KVER: "$(shell apt info linux-headers-truenas-production-amd64 | awk '/Source:/ { print $$2}' | sed 's/linux-//')"
@@ -620,7 +620,7 @@ sources:
         - kernel
         - kernel-dbg
 - name: truenas_binaries
-  repo: https://github.com/truenas/binaries
+  repo: https://github.com/HarborNAS/binaries
   branch: master
 - name: truenas_webui
   repo: https://github.com/HarborNAS/webui
@@ -637,19 +637,19 @@ sources:
   branch: master
   secret_env: ["SENTRY_AUTH_TOKEN"]
 - name: sedutil
-  repo: https://github.com/truenas/sedutil
+  repo: https://github.com/HarborNAS/sedutil
   branch: master
 - name: python_netsnmpagent
-  repo: https://github.com/truenas/python-netsnmpagent
+  repo: https://github.com/HarborNAS/python-netsnmpagent
   branch: truenas/0.6.1
 - name: python_truenas_requirements
-  repo: https://github.com/truenas/python-truenas-requirements
+  repo: https://github.com/HarborNAS/python-truenas-requirements
   branch: master
 - name: licenselib
-  repo: https://github.com/truenas/licenselib
+  repo: https://github.com/HarborNAS/licenselib
   branch: master
 - name: zectl
-  repo: https://github.com/truenas/zectl
+  repo: https://github.com/HarborNAS/zectl
   branch: master
   predepscmd:
     - "cp -a packaging/debian ."
@@ -657,25 +657,25 @@ sources:
   explicit_deps:
     - openzfs
 - name: ixdiagnose
-  repo: https://github.com/truenas/ixdiagnose
+  repo: https://github.com/HarborNAS/ixdiagnose
   branch: master
 - name: ixhardware
-  repo: https://github.com/truenas/ixhardware
+  repo: https://github.com/HarborNAS/ixhardware
   branch: master
 - name: apps_validation
-  repo: https://github.com/truenas/apps_validation
+  repo: https://github.com/HarborNAS/apps_validation
   branch: master
 - name: py_cryptit
-  repo: https://github.com/truenas/py-cryptit
+  repo: https://github.com/HarborNAS/py-cryptit
   branch: master
 - name: py_sgio
-  repo: https://github.com/truenas/py-sgio
+  repo: https://github.com/HarborNAS/py-sgio
   branch: master
 - name: py_fenced
-  repo: https://github.com/truenas/py-fenced
+  repo: https://github.com/HarborNAS/py-fenced
   branch: master
 - name: py_nvme
-  repo: https://github.com/truenas/py-nvme
+  repo: https://github.com/HarborNAS/py-nvme
   branch: master
 - name: truenas
   repo: https://github.com/HarborNAS/middleware
@@ -696,16 +696,16 @@ sources:
     - name: truenas_files
       subdir: src/freenas
 - name: truenas_api_client
-  repo: https://github.com/truenas/api_client
+  repo: https://github.com/HarborNAS/api_client
   branch: master
 - name: truenas_verify
-  repo: https://github.com/truenas/truenas_verify
+  repo: https://github.com/HarborNAS/truenas_verify
   branch: master
 - name: midcli
   repo: https://github.com/HarborNAS/midcli
   branch: master
 - name: grub2
-  repo: https://github.com/truenas/grub2
+  repo: https://github.com/HarborNAS/grub2
   branch: master
   debian_fork: true
   predepscmd:
@@ -716,7 +716,7 @@ sources:
   jobs: 1
   batch_priority: 150
 - name: parted
-  repo: https://github.com/truenas/parted
+  repo: https://github.com/HarborNAS/parted
   branch: master
   debian_fork: true
   predepscmd:
@@ -725,15 +725,15 @@ sources:
   deoptions: nocheck
   generate_version: false
 - name: rclone
-  repo: https://github.com/truenas/rclone
+  repo: https://github.com/HarborNAS/rclone
   branch: master
   deoptions: nocheck
   generate_version: false
 - name: py_sg3
-  repo: https://github.com/truenas/py-sg3
+  repo: https://github.com/HarborNAS/py-sg3
   branch: master
 - name: smartmontools
-  repo: https://github.com/truenas/smartmontools
+  repo: https://github.com/HarborNAS/smartmontools
   branch: master
   debian_fork: true
   predepscmd:
@@ -742,11 +742,11 @@ sources:
   deoptions: nocheck
   generate_version: false
 - name: truenas_audit_rules
-  repo: https://github.com/truenas/audit_rules.git
+  repo: https://github.com/HarborNAS/audit_rules.git
   branch: master
   generate_version: false
 - name: nfs_utils
-  repo: https://github.com/truenas/nfs-utils.git
+  repo: https://github.com/HarborNAS/nfs-utils.git
   branch: trixie
   generate_version: false
 
