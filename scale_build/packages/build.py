@@ -1,11 +1,12 @@
 import contextlib
 import json
 import os
+import re
 import shlex
 import shutil
 
 from datetime import datetime
-from scale_build.config import BUILD_TIME, VERSION
+from scale_build.config import BUILD_TIME, VERSION, TRUENAS_VENDOR
 from scale_build.exceptions import CallError
 from scale_build.utils.environment import APT_ENV
 from scale_build.utils.manifest import get_truenas_train, get_release_code_name, get_secret_env, get_manifest
@@ -72,6 +73,41 @@ class BuildPackageMixin:
             env[k] = secrets[k]
         return env
 
+    def _get_debian_info(self):
+        """Read Debian version and codename from the build chroot filesystem.
+
+        Returns a dict with 'version' (e.g. '13') and 'codename' (e.g. 'trixie').
+        """
+        # Read major version from /etc/debian_version (e.g. "13", "13.1", "trixie/sid")
+        debian_version_file = os.path.join(self.dpkg_overlay, 'etc/debian_version')
+        with open(debian_version_file, 'r') as f:
+            raw = f.read().strip()
+
+        # For testing/unstable releases, debian_version may contain "trixie/sid"
+        # so we also parse /etc/os-release for the codename
+        if raw[0].isdigit():
+            debian_version = raw.split('.')[0]
+        else:
+            debian_version = None
+
+        # Parse /etc/os-release for VERSION_CODENAME and VERSION_ID
+        os_release_file = os.path.join(self.dpkg_overlay, 'etc/os-release')
+        codename = None
+        with open(os_release_file, 'r') as f:
+            for line in f:
+                match = re.match(r'^VERSION_CODENAME=(.+)$', line.strip())
+                if match:
+                    codename = match.group(1).strip('"')
+                if debian_version is None:
+                    match = re.match(r'^VERSION_ID=(.+)$', line.strip())
+                    if match:
+                        debian_version = match.group(1).strip('"').split('.')[0]
+
+        return {
+            'version': debian_version or 'unknown',
+            'codename': codename or 'unknown',
+        }
+
     def _build_impl(self):
         shutil.copytree(self.source_path, self.source_in_chroot, dirs_exist_ok=True, symlinks=True)
         if os.path.exists(os.path.join(self.dpkg_overlay_packages_path, 'Packages.gz')):
@@ -85,6 +121,10 @@ class BuildPackageMixin:
 
         # Truenas package is special
         if self.name == 'truenas':
+            debian_info = self._get_debian_info()
+            debian_version = debian_info['version']
+            codename = debian_info['codename']
+
             os.makedirs(os.path.join(self.package_source_with_chroot, 'data'))
             with open(os.path.join(self.package_source_with_chroot, 'data/manifest.json'), 'w') as f:
                 f.write(json.dumps({
@@ -96,6 +136,28 @@ class BuildPackageMixin:
             os.makedirs(os.path.join(self.package_source_with_chroot, 'etc'), exist_ok=True)
             with open(os.path.join(self.package_source_with_chroot, 'etc/version'), 'w') as f:
                 f.write(VERSION)
+            os.makedirs(os.path.join(self.package_source_with_chroot, 'usr/lib'), exist_ok=True)
+            with open(os.path.join(self.package_source_with_chroot, 'usr/lib/os-release.truenas'), 'w') as f:
+                f.write(
+                    '\n'.join([
+                        f'PRETTY_NAME="{TRUENAS_VENDOR}/Debian {debian_version} ({codename})"',
+                        f'NAME="{TRUENAS_VENDOR}/Debian"',
+                        f'ID="{TRUENAS_VENDOR}"',
+                        f'VERSION="{VERSION}"',
+                        f'VERSION_ID="{VERSION}"',
+                        f'VERSION_CODENAME="{codename}"',
+                        'HOME_URL="https://harboros.ai/"',
+                        'SUPPORT_URL="https://github.com/HarborNAS/community/discussions/categories/feedback"',
+                        'BUG_REPORT_URL="https://github.com/HarborNAS/community/discussions/categories/bug"',
+                        '',
+                    ])
+                )
+            # /etc/issue.truenas - for local console login (includes \n \l terminal escapes)
+            with open(os.path.join(self.package_source_with_chroot, 'etc/issue.truenas'), 'w') as f:
+                f.write(f"{TRUENAS_VENDOR} based on Debian GNU/Linux {debian_version} \\n \\l\n")
+            # /etc/issue.net.truenas - for network login (no terminal escapes)
+            with open(os.path.join(self.package_source_with_chroot, 'etc/issue.net.truenas'), 'w') as f:
+                f.write(f"{TRUENAS_VENDOR} based on Debian GNU/Linux {debian_version}\n")
 
         for prebuild_command in self.prebuildcmd:
             self.logger.debug('Running prebuildcmd: %r', prebuild_command)

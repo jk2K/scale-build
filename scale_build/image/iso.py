@@ -111,7 +111,7 @@ def make_iso_file():
     ):
         os.unlink(f)
 
-    shutil.copy(update_file_path(), os.path.join(CD_DIR, 'TrueNAS-SCALE.update'))
+    shutil.copy(update_file_path(), os.path.join(CD_DIR, 'TrueNAS.update'))
     os.makedirs(os.path.join(CHROOT_BASEDIR, RELEASE_DIR), exist_ok=True)
     os.makedirs(os.path.join(CHROOT_BASEDIR, CD_DIR), exist_ok=True)
 

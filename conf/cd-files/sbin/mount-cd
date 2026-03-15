@@ -6,7 +6,7 @@ mountpoint=/cdrom
 
 is_live_path()
 {
-    FILE="${1}/TrueNAS-SCALE.update"
+    FILE="${1}/TrueNAS.update"
     if [ -f "${FILE}" ]
     then
         return 0

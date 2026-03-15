@@ -135,8 +135,8 @@ base-packages:
   install_recommends: true
 - name: cifs-utils
   install_recommends: true
-- name: nfs4xdr-acl-tools
-  install_recommends: true
+#- name: nfs4xdr-acl-tools
+#  install_recommends: true
 - name: nfs4-acl-tools
   install_recommends: true
 - name: qemu-guest-agent
