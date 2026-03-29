@@ -197,22 +197,22 @@ base-prune:
 - gstreamer1.0-x
 - gstreamer1.0-plugins-base
 - gstreamer1.0-libav
-- libgdk-pixbuf2.0-0
-- x11-common
-- python-is-python2
+#- libgdk-pixbuf2.0-0
+#- x11-common
+#- python-is-python2
 # dependency tree openvpn->easy-rsa->opensc
 # we don't need this package since it's for dealing with smart cards
 # but more importantly, removes a category of potentical CVE exposure
-- opensc
+#- opensc
 # remove gnupg to remove class of potential CVEs and also because we
 # don't use it
-- gnupg
+#- gnupg
 # The functionality that lvm2 provides is mutually exclusive with
 # ZFS so remove it. NOTE: We've also seen a well-known piece of
 # software (in the wild) that will SSH into us, use lvm tools to
 # create volumes on-top of ZVOLs to _explicitly_ "lock" the
 # underlying zvol preventing us from doing anything with it.
-- lvm2
+#- lvm2
 
 #
 # Update build-epoch when you want to force the next build to be
@@ -345,6 +345,45 @@ additional-packages:
   install_recommends: false
 - name: ntfs-3g
   comment: requested by harboros, support NTFS
+  install_recommends: false
+- name: libgomp1
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: libgl1
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: libglib2.0-0
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: libsm6
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: libxext6
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: ffmpeg
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: libreoffice-core-nogui
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: libxrender-dev
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: libavcodec-dev
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: libavformat-dev
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: libavutil-dev
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: libswscale-dev
+  comment: requested by harboros, support aipc-nas-api
+  install_recommends: false
+- name: libavdevice-dev
+  comment: requested by harboros, support aipc-nas-api
   install_recommends: false
 
 #
@@ -781,3 +820,6 @@ external-packages:
   harboros-featured-photos:
     deb_version: "0.1.0"
     url_template: "https://update.harboros.ai/deb/harboros-featured-photos_{version}_linux_{arch}.deb"
+  harboros-aipc-nas-api:
+    deb_version: "1.0.0"
+    url_template: "https://update.harboros.ai/deb/harboros-aipc-nas-api_{version}_{arch}.deb"
