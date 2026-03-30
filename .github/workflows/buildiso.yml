@@ -36,7 +36,7 @@ jobs:
           sudo truenas_webui_OVERRIDE=${{inputs.version}} truenas_OVERRIDE=${{inputs.version}} make checkout
       - name: Builds all the *.deb packages
         run: |
-          sudo TRUENAS_VERSION=${{steps.set-version.outputs.HarborNAS_VERSION}} TRUENAS_TRAIN=${{steps.set-version.outputs.TRUENAS_TRAIN}} make packages
+          sudo TRUENAS_VENDOR=HarborOS TRUENAS_VERSION=${{steps.set-version.outputs.HarborNAS_VERSION}} TRUENAS_TRAIN=${{steps.set-version.outputs.TRUENAS_TRAIN}} make packages
       - name: Builds the stand-alone update file
         run: |
           sudo make update
