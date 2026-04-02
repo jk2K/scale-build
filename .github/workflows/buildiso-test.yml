@@ -72,17 +72,19 @@ jobs:
         run: |
           isoFileName="TrueNAS-SCALE-${TRUENAS_VERSION}-HarborOS"
           updateFileName="TrueNAS-SCALE-${TRUENAS_VERSION}"
+          destIsoFileName="HarborOS-${TRUENAS_VERSION}"
+          destUpdateFileName="HarborOS-${TRUENAS_VERSION}"
           R2_ENDPOINT="https://b001991453068c59d8f4aa512bc0b16a.r2.cloudflarestorage.com"
           R2_BUCKET="harboros-update"
           coscli config add -b harboros-1317635745 -r ap-guangzhou -a willow --init-skip || true
-          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${isoFileName}.iso" "cos://willow/test/${isoFileName}.iso"
-          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${isoFileName}.iso.sha256" "cos://willow/test/${isoFileName}.iso.sha256"
-          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${updateFileName}.update" "cos://willow/test/${updateFileName}.update"
-          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${updateFileName}.update.sha256" "cos://willow/test/${updateFileName}.update.sha256"
-          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${TRUENAS_TRAIN}/${isoFileName}.iso" --body "./tmp/release/${isoFileName}.iso"
-          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${TRUENAS_TRAIN}/${isoFileName}.iso.sha256" --body "./tmp/release/${isoFileName}.iso.sha256"
-          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${TRUENAS_TRAIN}/${updateFileName}.update" --body "./tmp/release/${updateFileName}.update"
-          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${TRUENAS_TRAIN}/${updateFileName}.update.sha256" --body "./tmp/release/${updateFileName}.update.sha256"
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${isoFileName}.iso" "cos://willow/test/${destIsoFileName}.iso"
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${isoFileName}.iso.sha256" "cos://willow/test/${destIsoFileName}.iso.sha256"
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${updateFileName}.update" "cos://willow/test/${destUpdateFileName}.update"
+          coscli cp --secret-id $QCLOUD_ACCESS_KEY_ID --secret-key $QCLOUD_SECRET_ACCESS_KEY "./tmp/release/${updateFileName}.update.sha256" "cos://willow/test/${destUpdateFileName}.update.sha256"
+          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${TRUENAS_TRAIN}/${destIsoFileName}.iso" --body "./tmp/release/${isoFileName}.iso"
+          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${TRUENAS_TRAIN}/${destIsoFileName}.iso.sha256" --body "./tmp/release/${isoFileName}.iso.sha256"
+          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${TRUENAS_TRAIN}/${destUpdateFileName}.update" --body "./tmp/release/${updateFileName}.update"
+          /usr/local/bin/aws s3api put-object --endpoint-url ${R2_ENDPOINT} --bucket ${R2_BUCKET} --key "scale/${TRUENAS_TRAIN}/${destUpdateFileName}.update.sha256" --body "./tmp/release/${updateFileName}.update.sha256"
       - name: update releases.json
         if: ${{ inputs.releaseUpdate }}
         run: |

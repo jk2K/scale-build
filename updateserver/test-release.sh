@@ -1,6 +1,7 @@
 #!/bin/bash
 
 updateFileName="TrueNAS-SCALE-${TRUENAS_VERSION}"
+destUpdateFileName="HarborOS-${TRUENAS_VERSION}"
 train="${TRUENAS_TRAIN}"
 CODE_NAME=$(yq -r '.code_name' conf/build.manifest)
 R2_ENDPOINT="https://b001991453068c59d8f4aa512bc0b16a.r2.cloudflarestorage.com"
@@ -34,7 +35,7 @@ echo "Creating new release entry..."
 NEW_ENTRY=$(cat <<EOF
 {
 "${TRUENAS_VERSION}": {
-    "filename": "${updateFileName}.update",
+    "filename": "${destUpdateFileName}.update",
     "version": "${TRUENAS_VERSION}",
     "date": "${CURRENT_DATE}",
     "changelog": "",
