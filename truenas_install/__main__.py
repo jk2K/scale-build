@@ -535,8 +535,6 @@ def main():
 
                 run_command(["mount", "-t", "sysfs", "none", f"{root}/sys"])
                 undo.append(["umount", f"{root}/sys"])
-                if os.path.exists("/sys/firmware/efi"):
-                    undo.append(["umount", f"{root}/sys/firmware/efi/efivars"])
 
                 run_command(["mount", "-t", "zfs", f"{pool_name}/grub", f"{root}/boot/grub"])
                 undo.append(["umount", f"{root}/boot/grub"])
@@ -606,6 +604,7 @@ def main():
                             else:
                                 write_error(f"Command {cmd} failed with exit code {e.returncode}: {e.stderr}")
                                 raise
+                        undo.append(["umount", f"{root}/sys/firmware/efi/efivars"])
 
                         # Clean up dumps from NVRAM to prevent
                         # "failed to register the EFI boot entry: No space left on device"
