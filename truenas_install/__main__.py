@@ -32,7 +32,7 @@ if version.major < 3 or version.minor < INSTALLER_PYTHON_MIN_VERSION_MINOR:
 
 from collections import defaultdict  # noqa
 import contextlib  # noqa
-from datetime import datetime  # noqa
+from datetime import UTC, datetime  # noqa
 import itertools  # noqa
 import logging  # noqa
 import os  # noqa
@@ -69,6 +69,46 @@ def run_command(cmd, **kwargs):
     except subprocess.CalledProcessError as e:
         write_error(f"Command {cmd} failed with exit code {e.returncode}: {e.stderr}")
         raise
+
+
+def _is_mount_under_root(mountpoint, root):
+    try:
+        return os.path.commonpath([mountpoint, root]) == root
+    except ValueError:
+        return False
+
+
+def unmount_install_root(root, undo):
+    for cmd in reversed(undo):
+        run_command(cmd, check=False)
+
+    previous_remaining = None
+    for _ in range(10):
+        mounts = sorted(
+            [mnt for mnt in getmntinfo() if _is_mount_under_root(mnt.mountpoint, root)],
+            key=lambda mnt: mnt.mountpoint.count(os.sep),
+            reverse=True,
+        )
+        if not mounts:
+            return
+
+        remaining = tuple(mnt.mountpoint for mnt in mounts)
+        if remaining == previous_remaining:
+            break
+
+        previous_remaining = remaining
+
+        for mnt in mounts:
+            run_command(["umount", mnt.mountpoint], check=False)
+
+    mounts = sorted(
+        [mnt for mnt in getmntinfo() if _is_mount_under_root(mnt.mountpoint, root)],
+        key=lambda mnt: mnt.mountpoint.count(os.sep),
+        reverse=True,
+    )
+    if mounts:
+        details = ", ".join(f"{mnt.mountpoint} ({mnt.fs_type})" for mnt in mounts)
+        raise RuntimeError(f"Failed to unmount install root {root}: remaining mounts: {details}")
 
 
 def get_partition(disk, partition):
@@ -233,7 +273,7 @@ def precheck(old_root):
             if (
                 (licenseobj := read_license(old_root)) and
                 ContractType(licenseobj.contract_type) in [ContractType.silver, ContractType.gold] and
-                licenseobj.contract_end > datetime.utcnow().date()
+                licenseobj.contract_end > datetime.now(UTC).date()
             ):
                 fatal = True
                 text = (
@@ -338,7 +378,7 @@ def main():
             if entry.get("clone"):
                 if old_root_dataset is not None:
                     old_dataset = f"{old_root_dataset}/{entry['name']}"
-                    snapshot_name = f"{old_dataset}@install-{datetime.utcnow().strftime('%Y-%m-%d-%H-%M-%S')}"
+                    snapshot_name = f"{old_dataset}@install-{datetime.now(UTC).strftime('%Y-%m-%d-%H-%M-%S')}"
                     result = run_command(["zfs", "snapshot", snapshot_name], check=False)
                     if result.returncode == 0:
                         run_command(["zfs", "clone"] + options + [snapshot_name, entry_dataset_name])
@@ -680,10 +720,14 @@ def main():
                 else:
                     write_progress(0.96, "No need to update grub in ESP")
             finally:
-                for cmd in reversed(undo):
-                    run_command(cmd)
+                cleanup_error = None
+                try:
+                    unmount_install_root(root, undo)
+                except Exception as e:
+                    cleanup_error = e
 
-                run_command(["umount", root])
+                if cleanup_error is not None and sys.exc_info()[0] is None:
+                    raise cleanup_error
 
         for entry in TRUENAS_DATASETS:
             this_ds = f"{dataset_name}/{entry['name']}"
