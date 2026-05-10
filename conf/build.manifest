@@ -781,3 +781,12 @@ external-packages:
   harboros-featured-photos:
     deb_version: "0.1.0"
     url_template: "https://update.harboros.ai/deb/harboros-featured-photos_{version}_linux_{arch}.deb"
+  harboros-im-gate:
+    deb_version: "1.0.0"
+    url_template: "https://github.com/Bean-Harbor/HarborGate/releases/download/v{version}/harboros-im-gate_{version}_linux_{arch}.deb"
+  harboros-beacon:
+    deb_version: "1.0.0"
+    url_template: "https://github.com/Bean-Harbor/HarborBeacon/releases/download/v{version}/harboros-beacon_{version}_linux_{arch}.deb"
+  harboros-ffmpeg:
+    deb_version: "1.0.0"
+    url_template: "https://update.harboros.ai/deb/harboros-ffmpeg_{version}_linux_{arch}.deb"
