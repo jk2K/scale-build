@@ -778,6 +778,10 @@ external-packages:
   harboros-subscreen:
     deb_version: "1.0.0"
     url_template: "https://github.com/HarborNAS/sub-screen/releases/download/v{version}/harboros-subscreen_{version}_linux_{arch}.deb"
+  # harboros-beacon depend on harboros-ffmpeg
+  harboros-ffmpeg:
+    deb_version: "1.0.0"
+    url_template: "https://update.harboros.ai/deb/harboros-ffmpeg_{version}_linux_{arch}.deb"
   harboros-featured-photos:
     deb_version: "0.1.0"
     url_template: "https://update.harboros.ai/deb/harboros-featured-photos_{version}_linux_{arch}.deb"
@@ -787,6 +791,3 @@ external-packages:
   harboros-beacon:
     deb_version: "1.0.0"
     url_template: "https://github.com/Bean-Harbor/HarborBeacon/releases/download/v{version}/harboros-beacon_{version}_linux_{arch}.deb"
-  harboros-ffmpeg:
-    deb_version: "1.0.0"
-    url_template: "https://update.harboros.ai/deb/harboros-ffmpeg_{version}_linux_{arch}.deb"
